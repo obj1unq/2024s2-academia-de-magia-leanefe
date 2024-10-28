@@ -8,7 +8,7 @@ describe "Academia de Magia" {
 	const pava = new Cosa (volumen = 2, marca = acme, esMagica = false, esReliquia = true)
 	const lamparaAladino = new Cosa (volumen = 3, marca = fenix, esMagica = true, esReliquia = true)
 	const baul = new Baul (volumenMaximo = 5)
-	const gabineteMagico = new GabineteMagico()
+	const gabineteMagico = new GabineteMagico(precio = 6)
 	const armario = new Armario(cantidadMaxima = 2)
 	
 	method initialize() {
