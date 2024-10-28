@@ -18,7 +18,11 @@ object academia {
 	}
 
 	method puedeGuardar(cosa) {
-		return not self.tieneGuardada(cosa) and muebles.any({mueble => mueble.puedeGuardar(cosa)})
+		return not self.tieneGuardada(cosa) and self.hayMuebleDondePuedoGuardar(cosa)
+	}
+
+	method hayMuebleDondePuedoGuardar(cosa) {
+		return muebles.any({mueble => mueble.puedeGuardar(cosa)})
 	}
 
 	method mueblesDondePuedoGuardar(cosa) {
@@ -43,6 +47,18 @@ class Cosa {
 	const property volumen 
 	const property esMagica
 	const property esReliquia	
+
+	method utilidad() {
+		return volumen + self.utilidadPorMagia() + self.utilidadPorReliquia() + marca.utilidad()
+	}
+
+	method utilidadPorMagia() {
+		return if (esMagica) 3 else 0
+	}
+
+	method utilidadPorReliquia() {
+		return if (esReliquia) 5 else 0
+	}
 }
 
 // MUEBLES
@@ -54,42 +70,38 @@ class Mueble {
 		return cosas.contains(cosa)
 	}
 
+	method puedeGuardar(cosa)
+
 	method guardar(cosa) {
 		cosas.add(cosa)
 	}
 }
 
-object baul inherits Mueble {
-	var volumen = 0
-	var property volumenMaximo = 5
-	
-	override method guardar(cosa) {
-		super(cosa)
-		volumen += cosa.volumen()
-	}
-
-	method volumen() {
-		return volumen
-	}
+class Baul inherits Mueble {
+	var property volumenMaximo
 
 	method puedeGuardar(cosa) {
 		return self.tieneEspacioParaGuardar(cosa)
 	}
 
 	method tieneEspacioParaGuardar(cosa) {
-		return volumen + cosa.volumen() <= volumenMaximo
+		return self.volumenTotal() + cosa.volumen() <= volumenMaximo
+	}
+
+	method volumenTotal() {
+		return cosas.sum({cosa => cosa.volumen()})
 	}
 }
 
-object gabineteMagico inherits Mueble {
+class GabineteMagico inherits Mueble {
 
 	method puedeGuardar(cosa) {
 		return cosa.esMagica()
 	}
 }
 
-object armario inherits Mueble {
-	var property cantidadMaxima = 3 
+class Armario inherits Mueble {
+	var property cantidadMaxima
 
 	method puedeGuardar(cosa) {
 		return cosas.size() < cantidadMaxima
@@ -98,19 +110,19 @@ object armario inherits Mueble {
 
 // MARCAS
 object acme {
-	method volumenQueAporta(cosa) {
-
+	method utilidad(cosa) {
+		return cosa.volumen() / 2
 	}	
 }
 
 object fenix {
-	method volumenQueAporta(cosa) {
-
+	method utilidad(cosa) {
+		return if (cosa.esReliquia()) 3 else 0
 	}
 }
 
 object cuchuflito {
-	method volumenQueAporta(cosa) {
-
+	method utilidad(cosa) {
+		return 0
 	}
 }
